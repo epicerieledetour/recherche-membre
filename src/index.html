@@ -88,14 +88,28 @@
             member => member[2] === memberNumber
           );
           console.log(selectedMember);
-          this.appendPre(selectedMember);
+          this.appendPre(`
+            Statut: ${selectedMember[0]},
+            numéro de famille: ${selectedMember[1]},
+            numéro de membre: ${selectedMember[2]},
+            nom: ${selectedMember[3]},
+            prénom: ${selectedMember[4]},
+            téléphone: ${selectedMember[5]}
+          `);
         } else if (memberPhoneNumber) {
           const selectedMember = this.arrayOfMembers.filter(
             // member[5] correspond au numéro de téléphone
             member => this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
           );
           console.log(selectedMember);
-          this.appendPre(selectedMember);
+          this.appendPre(`
+            Statut: ${selectedMember[0]},
+            numéro de famille: ${selectedMember[1]},
+            numéro de membre: ${selectedMember[2]},
+            nom: ${selectedMember[3]},
+            prénom: ${selectedMember[4]},
+            téléphone: ${selectedMember[5]}
+          `);
         } else {
           this.appendPre('Membre introuvable');
           console.log('Membre introuvable');
