@@ -1,32 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
 <head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Material Design for Bootstrap fonts and icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+
+  <!-- Material Design for Bootstrap CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
   <title>Recherche utilisateur</title>
-  <meta charset="utf-8" />
 </head>
 
 <body>
-  <app-root></app-root>
-  <p>Recherche utilisateur</p>
+  <div class="container">
+    <app-root></app-root>
 
-  <!--Add buttons to initiate auth sequence and sign out-->
-  <button id="authorize_button" style="display: none;">Authorize</button>
-  <button id="signout_button" style="display: none;">Sign Out</button>
+    <div class="title">
+      <div class="title__text">
+        <h1>Recherche utilisateur</h1>
+      </div>
 
-  <div>
-    <label for="numero_membre">Numéro de membre :</label>
-    <input type="text" id="numero_membre" name="numero_membre">
-  </div>
-  <div>
-    <label for="telephone">Téléphone :</label>
-    <input type="text" id="telephone" name="telephone">
-  </div>
-  <div class="button">
-    <button onClick="rechercher()">Envoyer le message</button>
-  </div>
+      <div class="title__actions">
+        <!--Add buttons to initiate auth sequence and sign out-->
+        <button id="authorize_button" class="btn btn-primary" style="display: none;">Authorize</button>
+        <button id="signout_button" class="btn btn-primary" style="display: none;">Sign Out</button>
+      </div>
+    </div>
 
-  <pre id="content"></pre>
+    <div class="content">
+      <form>
+        <fieldset class="form-group">
+          <label for="numero_membre" class="bmd-label-static">Numéro de membre :</label>
+          <input type="text" id="numero_membre" name="numero_membre" class="form-control">
+          <span class="bmd-help">Entrez le numéro de membre</span>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="telephone" class="bmd-label-static">Numéro de téléphone :</label>
+          <input type="text" id="telephone" name="telephone" class="form-control">
+          <span class="bmd-help">Entrez le numéro de téléphone</span>
+        </fieldset>
+        <button class="btn btn-default">Cancel</button>
+        <button class="btn btn-primary btn-raised" onClick="rechercher();return false">Submit</button>
+      </form>
+
+      <pre id="content"></pre>
+    </div>
+  </div>
 
   <script type="text/javascript">
     // Client ID and API key from the Developer Console
@@ -43,12 +65,45 @@
     let authorizeButton = document.getElementById('authorize_button');
     let signoutButton = document.getElementById('signout_button');
 
-    let arrayOfMembers = [];
+    let signedIn = false;
 
+    let arrayOfMembers = [];
+    let objectOfMembers = {};
+
+    // Fonction pour retirer les espaces et les tirets du numéro de téléphone
+    function sanitizeMemberPhoneNumber(memberPhoneNumber) {
+      if (memberPhoneNumber) {
+        return memberPhoneNumber.replace(/-|\s/g,'');
+      }
+    }
+
+    // Fonction pour rechercher un membre
     function rechercher() {
-      let memberNumber = document.getElementById('numero_membre').value;
-      let memberPhoneNumber = document.getElementById('telephone').value;
-      console.log('Numéro de membre: ' + memberNumber + ', numéro de téléphone: ' + memberPhoneNumber);
+      if (this.signedIn) {
+        let memberNumber = document.getElementById('numero_membre').value;
+        let memberPhoneNumber = document.getElementById('telephone').value;
+        if (memberNumber) {
+          const selectedMember = this.arrayOfMembers.filter(
+            // member[2] correspond au numéro de membre
+            member => member[2] === memberNumber
+          );
+          console.log(selectedMember);
+          this.appendPre(selectedMember);
+        } else if (memberPhoneNumber) {
+          const selectedMember = this.arrayOfMembers.filter(
+            // member[5] correspond au numéro de téléphone
+            member => this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
+          );
+          console.log(selectedMember);
+          this.appendPre(selectedMember);
+        } else {
+          this.appendPre('Membre introuvable');
+          console.log('Membre introuvable');
+        }
+        console.log('Numéro de membre: ' + memberNumber + ', numéro de téléphone: ' + memberPhoneNumber);
+      } else {
+        this.alert('Vous devez vous authentifier!');
+      }
     }
 
     /**
@@ -85,10 +140,12 @@
      */
     function updateSigninStatus(isSignedIn) {
       if (isSignedIn) {
+        this.signedIn = true;
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
-        listMajors();
+        getMembers();
       } else {
+        this.signedIn = false;
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
       }
@@ -124,7 +181,7 @@
      * Print the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
-    function listMajors() {
+    function getMembers() {
       gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: '1ysgHZRO-DCJErSd4vVaYo0zSMxIJopobPpVh_10QBys',
         range: 'A2:F',
@@ -134,11 +191,6 @@
         if (range.values.length > 0) {
           this.arrayOfMembers = range.values;
           console.log(this.arrayOfMembers);
-          for (i = 0; i < range.values.length; i++) {
-            var row = range.values[i];
-            // Print columns A and E, which correspond to indices 0 and 4.
-            appendPre(row[0] + ', ' + row[4]);
-          }
         } else {
           console.warn('Rien trouvé :(');
         }
@@ -149,9 +201,19 @@
 
   </script>
 
-  <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+  <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  <script
+    async
+    defer
+    src="https://apis.google.com/js/api.js"
+    onload="this.onload=function(){};handleClientLoad()"
     onreadystatechange="if (this.readyState === 'complete') this.onload()">
-    </script>
+  </script>
 </body>
 
 </html>
