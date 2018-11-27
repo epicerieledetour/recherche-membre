@@ -5,9 +5,9 @@ Installer nodeJS à cette adresse: https://nodejs.org/en/download/, et Git ensui
 Faire un clone du projet à l'endroit désiré.
 `git clone https://github.com/doudbanks/recherche-membre.git`
 
-Installer angular cli globalement en lancant cette commande: npm install -g @angular/cli.
+Installer angular cli globalement en lancant cette commande: `npm install -g @angular/cli`.
 
-Ensuite, se rendre dans le dossier du projet avec la ligne de commande et installer les dépendances en lancant cette commande: npm install.
+Ensuite, se rendre dans le dossier du projet avec la ligne de commande et installer les dépendances en lancant cette commande: `npm install`.
 
 Une fois terminé (ça prend généralement un peu de temps), on peut lancer la commande ng serve et se rendre à cette adresse dans son navigateur http://localhost:4200/ (de préférence chrome, firefox ou IE en version Edge).
 
