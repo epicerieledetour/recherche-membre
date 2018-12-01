@@ -25,8 +25,8 @@
 
       <div class="title__actions">
         <!--Add buttons to initiate auth sequence and sign out-->
-        <button id="authorize_button" class="btn btn-primary" style="display: none;">Authorize</button>
-        <button id="signout_button" class="btn btn-primary" style="display: none;">Sign Out</button>
+        <button id="authorize_button" class="btn btn-primary" style="display: none;">Connexion</button>
+        <button id="signout_button" class="btn btn-primary" style="display: none;">Déconnexion</button>
       </div>
     </div>
 
@@ -42,8 +42,10 @@
           <input type="text" id="telephone" name="telephone" class="form-control">
           <span class="bmd-help">Entrez le numéro de téléphone</span>
         </fieldset>
-        <button class="btn btn-default">Cancel</button>
-        <button class="btn btn-primary btn-raised" onClick="rechercher();return false">Submit</button>
+        <div class="actions">
+          <button class="btn btn-default">Annuler</button>
+          <button class="btn btn-primary btn-raised" onClick="rechercher();return false">Rechercher</button>
+        </div>
       </form>
 
       <pre id="content"></pre>
