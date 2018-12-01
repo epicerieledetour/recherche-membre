@@ -79,39 +79,36 @@
       }
     }
 
+    function displayMember(member) {
+      this.appendPre(`
+        Statut: ${member[0]},
+        Numéro de famille: ${member[1]},
+        Numéro de membre: ${member[2]},
+        Nom: ${member[3]},
+        Prénom: ${member[4]},
+        Téléphone: ${member[5]}
+      `);
+    }
+
     // Fonction pour rechercher un membre
     function rechercher() {
       if (this.signedIn) {
         let memberNumber = document.getElementById('numero_membre').value;
         let memberPhoneNumber = document.getElementById('telephone').value;
         if (memberNumber) {
-          const selectedMember = this.arrayOfMembers.filter(
+          const selectedMember = this.arrayOfMembers.find(
             // member[2] correspond au numéro de membre
             member => member[2] === memberNumber
           );
           console.log(selectedMember);
-          this.appendPre(`
-            Statut: ${selectedMember[0]},
-            numéro de famille: ${selectedMember[1]},
-            numéro de membre: ${selectedMember[2]},
-            nom: ${selectedMember[3]},
-            prénom: ${selectedMember[4]},
-            téléphone: ${selectedMember[5]}
-          `);
+          this.displayMember(selectedMember);
         } else if (memberPhoneNumber) {
-          const selectedMember = this.arrayOfMembers.filter(
+          const selectedMember = this.arrayOfMembers.find(
             // member[5] correspond au numéro de téléphone
             member => this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
           );
           console.log(selectedMember);
-          this.appendPre(`
-            Statut: ${selectedMember[0]},
-            numéro de famille: ${selectedMember[1]},
-            numéro de membre: ${selectedMember[2]},
-            nom: ${selectedMember[3]},
-            prénom: ${selectedMember[4]},
-            téléphone: ${selectedMember[5]}
-          `);
+          this.displayMember(selectedMember);
         } else {
           this.appendPre('Membre introuvable');
           console.log('Membre introuvable');
