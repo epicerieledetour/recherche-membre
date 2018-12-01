@@ -31,7 +31,7 @@
     </div>
 
     <div class="content">
-      <form>
+      <form onsubmit="return false;">
         <fieldset class="form-group">
           <label for="numero_membre" class="bmd-label-static">Numéro de membre :</label>
           <input type="text" id="numero_membre" name="numero_membre" class="form-control">
@@ -93,7 +93,7 @@
     // Fonction pour rechercher un membre
     function rechercher() {
       if (this.signedIn) {
-        let memberNumber = document.getElementById('numero_membre').value;
+        let memberNumber = parseInt(document.getElementById('numero_membre').value, 10).toString();
         let memberPhoneNumber = document.getElementById('telephone').value;
         if (memberNumber) {
           const selectedMember = this.arrayOfMembers.find(
