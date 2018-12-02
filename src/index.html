@@ -49,6 +49,15 @@
       </form>
 
       <pre id="content"></pre>
+
+      <div class="result">
+        <p class="result-status" id="result-status"></p>
+        <p class="result-numero-famille" id="result-numero-famille"></p>
+        <p class="result-numero-membre" id="result-numero-membre"></p>
+        <p class="result-nom" id="result-nom"></p>
+        <p class="result-prenom" id="result-prenom"></p>
+        <p class="result-telephone" id="result-telephone"></p>
+      </div>
     </div>
   </div>
 
@@ -80,6 +89,12 @@
     }
 
     function displayMember(member) {
+      let statusField = document.getElementById('result-status');
+      let familyNumberField = document.getElementById('result-numero-famille');
+      let memberNumberField = document.getElementById('result-numero-membre');
+      let firstnameField = document.getElementById('result-nom');
+      let lastnameField = document.getElementById('result-prenom');
+      let phoneField = document.getElementById('result-telephone');
       this.appendPre(`
         Statut: ${member[0]},
         Numéro de famille: ${member[1]},
@@ -105,7 +120,11 @@
         } else if (memberPhoneNumber) {
           const selectedMember = this.arrayOfMembers.find(
             // member[5] correspond au numéro de téléphone
-            member => this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
+            member => {
+              console.log(this.sanitizeMemberPhoneNumber(member[5]));
+              console.log(this.sanitizeMemberPhoneNumber(memberPhoneNumber));
+              this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
+            }
           );
           console.log(selectedMember);
           this.displayMember(selectedMember);
@@ -114,6 +133,8 @@
           console.log('Membre introuvable');
         }
         console.log('Numéro de membre: ' + memberNumber + ', numéro de téléphone: ' + memberPhoneNumber);
+        document.getElementById('numero_membre').value = '';
+        document.getElementById('telephone').value = '';
       } else {
         this.alert('Vous devez vous authentifier!');
       }
