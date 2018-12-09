@@ -31,7 +31,7 @@
     </div>
 
     <div class="content">
-      <form onsubmit="return false;">
+      <form id="research-form" onsubmit="return false;">
         <fieldset class="form-group">
           <label for="numero_membre" class="bmd-label-static">Numéro de membre :</label>
           <input type="text" id="numero_membre" name="numero_membre" class="form-control">
@@ -43,20 +43,36 @@
           <span class="bmd-help">Entrez le numéro de téléphone</span>
         </fieldset>
         <div class="actions">
-          <button class="btn btn-default">Annuler</button>
-          <button class="btn btn-primary btn-raised" onClick="rechercher();return false">Rechercher</button>
+          <button class="btn btn-default" onclick="clearForm();return false">Annuler</button>
+          <button class="btn btn-primary btn-raised" onclick="rechercher();return false">Rechercher</button>
         </div>
       </form>
 
-      <pre id="content"></pre>
-
-      <div class="result">
-        <p class="result-status" id="result-status"></p>
-        <p class="result-numero-famille" id="result-numero-famille"></p>
-        <p class="result-numero-membre" id="result-numero-membre"></p>
-        <p class="result-nom" id="result-nom"></p>
-        <p class="result-prenom" id="result-prenom"></p>
-        <p class="result-telephone" id="result-telephone"></p>
+      <div id="result" class="result">
+        <p class="result__section">
+          <label class="result__section__label" for="result__section--status">Statut: </label>
+          <span class="result__section--status" id="result__section--status"></span>
+        </p>
+        <p class="result__section">
+          <label class="result__section__label" for="result__section--numero-famille">Numéro de famille: </label>
+          <span id="result__section--famille"></span>
+        </p>
+        <p class="result__section">
+          <label class="result__section__label" for="result__section--numero-membre">Numéro de membre: </label>
+          <span id="result__section--numero-membre"></span>
+        </p>
+        <p class="result__section">
+          <label class="result__section__label" for="result__section--nom">Nom: </label>
+          <span id="result__section--nom"></span>
+        </p>
+        <p class="result__section">
+          <label class="result__section__label" for="result__section--prenom">Prénom: </label>
+          <span id="result__section--prenom"></span>
+        </p>
+        <p class="result__section">
+          <label class="result__section__label" for="result__section--telephone">Téléphone: </label>
+          <span id="result__section--telephone"></span>
+        </p>
       </div>
     </div>
   </div>
@@ -73,13 +89,35 @@
     // included, separated by spaces.
     const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
-    let authorizeButton = document.getElementById('authorize_button');
-    let signoutButton = document.getElementById('signout_button');
+    const authorizeButton   = document.getElementById('authorize_button');
+    const signoutButton     = document.getElementById('signout_button');
+    const resultSection     = document.getElementById('result');
+    const statusField       = document.getElementById('result__section--status');
+    const familyNumberField = document.getElementById('result__section--numero-famille');
+    const memberNumberField = document.getElementById('result__section--numero-membre');
+    const firstnameField    = document.getElementById('result__section--nom');
+    const lastnameField     = document.getElementById('result__section--prenom');
+    const phoneField        = document.getElementById('result__section--telephone');
 
     let signedIn = false;
 
     let arrayOfMembers = [];
     let objectOfMembers = {};
+
+    function clearResult() {
+      statusField       ? statusField.innerHTML       = '' : '';
+      familyNumberField ? familyNumberField.innerHTML = '' : '';
+      memberNumberField ? memberNumberField.innerHTML = '' : '';
+      firstnameField    ? firstnameField.innerHTML    = '' : '';
+      lastnameField     ? lastnameField.innerHTML     = '' : '';
+      phoneField        ? phoneField.innerHTML        = '' : '';
+    }
+
+    function clearForm() {
+      let researchForm = document.getElementById('research-form').reset();
+      result.style.display = 'none';
+      this.clearResult();
+    }
 
     // Fonction pour retirer les espaces et les tirets du numéro de téléphone
     function sanitizeMemberPhoneNumber(memberPhoneNumber) {
@@ -88,44 +126,53 @@
       }
     }
 
+    function isEmptyObject(obj){
+      return (Object.getOwnPropertyNames(obj).length === 0);
+    }
+
     function displayMember(member) {
-      let statusField = document.getElementById('result-status');
-      let familyNumberField = document.getElementById('result-numero-famille');
-      let memberNumberField = document.getElementById('result-numero-membre');
-      let firstnameField = document.getElementById('result-nom');
-      let lastnameField = document.getElementById('result-prenom');
-      let phoneField = document.getElementById('result-telephone');
-      this.appendPre(`
-        Statut: ${member[0]},
-        Numéro de famille: ${member[1]},
-        Numéro de membre: ${member[2]},
-        Nom: ${member[3]},
-        Prénom: ${member[4]},
-        Téléphone: ${member[5]}
-      `);
+      if (member && !this.isEmptyObject(member)) {
+        result.style.display = 'block';
+        this.setStatusColor(member[0]);
+        member[0] ? statusField.innerHTML       = member[0] : '';
+        member[1] ? familyNumberField.innerHTML = member[1] : '';
+        member[2] ? memberNumberField.innerHTML = member[2] : '';
+        member[3] ? firstnameField.innerHTML    = member[3] : '';
+        member[4] ? lastnameField.innerHTML     = member[4] : '';
+        member[5] ? phoneField.innerHTML        = member[5] : '';
+      }
+    }
+
+    function setStatusColor(status) {
+      if (status === 'Actif') {
+        statusField.style.color = 'green';
+      } else if (status === 'Inactif') {
+        statusField.style.color = 'red';
+      }
     }
 
     // Fonction pour rechercher un membre
     function rechercher() {
       if (this.signedIn) {
-        let memberNumber = parseInt(document.getElementById('numero_membre').value, 10).toString();
+        let memberNumber = document.getElementById('numero_membre').value;
         let memberPhoneNumber = document.getElementById('telephone').value;
         if (memberNumber) {
+          // On retire les zéros devant le numéro de membre
+          memberNumber = parseInt(memberNumber, 10).toString();
           const selectedMember = this.arrayOfMembers.find(
             // member[2] correspond au numéro de membre
             member => member[2] === memberNumber
-          );
+          ) || ({} && alert('Entrez un numéro de membre valide!'));
           console.log(selectedMember);
           this.displayMember(selectedMember);
         } else if (memberPhoneNumber) {
           const selectedMember = this.arrayOfMembers.find(
             // member[5] correspond au numéro de téléphone
             member => {
-              console.log(this.sanitizeMemberPhoneNumber(member[5]));
-              console.log(this.sanitizeMemberPhoneNumber(memberPhoneNumber));
               this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
             }
-          );
+            // member => member[5] === memberPhoneNumber
+          ) || ({} && alert('Entrez un numéro de téléphone valide !'));
           console.log(selectedMember);
           this.displayMember(selectedMember);
         } else {
@@ -197,18 +244,6 @@
      */
     function handleSignoutClick(event) {
       gapi.auth2.getAuthInstance().signOut();
-    }
-
-    /**
-     * Append a pre element to the body containing the given message
-     * as its text node. Used to display the results of the API call.
-     *
-     * @param {string} message Text to be placed in pre element.
-     */
-    function appendPre(message) {
-      var pre = document.getElementById('content');
-      var textContent = document.createTextNode(message + '\n');
-      pre.appendChild(textContent);
     }
 
     /**

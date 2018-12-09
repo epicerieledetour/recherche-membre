@@ -12,3 +12,20 @@
 .actions {
   margin-top: 3rem;
 }
+
+.result {
+  margin-top: 3rem;
+  display: none;
+
+  &__section {
+    margin: 0;
+
+    &__label {
+      font-weight: 600;
+    }
+
+    &--status {
+      font-weight: 800;
+    }
+  }
+}
