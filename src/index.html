@@ -44,7 +44,7 @@
         </fieldset>
         <div class="actions">
           <button class="btn btn-default" onclick="clearForm();return false">Annuler</button>
-          <button class="btn btn-primary btn-raised" onclick="rechercher();return false">Rechercher</button>
+          <button class="btn btn-primary btn-raised" onclick="rechercher();return false" id="submitButton">Rechercher</button>
         </div>
       </form>
 
@@ -55,7 +55,7 @@
         </p>
         <p class="result__section">
           <label class="result__section__label" for="result__section--numero-famille">Numéro de famille: </label>
-          <span id="result__section--famille"></span>
+          <span id="result__section--numero-famille"></span>
         </p>
         <p class="result__section">
           <label class="result__section__label" for="result__section--numero-membre">Numéro de membre: </label>
@@ -89,15 +89,19 @@
     // included, separated by spaces.
     const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
-    const authorizeButton   = document.getElementById('authorize_button');
-    const signoutButton     = document.getElementById('signout_button');
-    const resultSection     = document.getElementById('result');
-    const statusField       = document.getElementById('result__section--status');
-    const familyNumberField = document.getElementById('result__section--numero-famille');
-    const memberNumberField = document.getElementById('result__section--numero-membre');
-    const firstnameField    = document.getElementById('result__section--nom');
-    const lastnameField     = document.getElementById('result__section--prenom');
-    const phoneField        = document.getElementById('result__section--telephone');
+    const authorizeButton             = document.getElementById('authorize_button');
+    const signoutButton               = document.getElementById('signout_button');
+    const inputMemberNumberField      = document.getElementById('numero_membre');
+    const inputMemberPhoneNumberField = document.getElementById('telephone');
+    const resultSection               = document.getElementById('result');
+    const statusField                 = document.getElementById('result__section--status');
+    const familyNumberField           = document.getElementById('result__section--numero-famille');
+    const memberNumberField           = document.getElementById('result__section--numero-membre');
+    const firstnameField              = document.getElementById('result__section--nom');
+    const lastnameField               = document.getElementById('result__section--prenom');
+    const phoneField                  = document.getElementById('result__section--telephone');
+    let memberNumber;
+    let memberPhoneNumber;
 
     let signedIn = false;
 
@@ -122,6 +126,7 @@
     // Fonction pour retirer les espaces et les tirets du numéro de téléphone
     function sanitizeMemberPhoneNumber(memberPhoneNumber) {
       if (memberPhoneNumber) {
+        console.log('Sanitized number: ', memberPhoneNumber.replace(/-|\s/g,''));
         return memberPhoneNumber.replace(/-|\s/g,'');
       }
     }
@@ -133,6 +138,7 @@
     function displayMember(member) {
       if (member && !this.isEmptyObject(member)) {
         result.style.display = 'block';
+        this.clearResult();
         this.setStatusColor(member[0]);
         member[0] ? statusField.innerHTML       = member[0] : '';
         member[1] ? familyNumberField.innerHTML = member[1] : '';
@@ -154,8 +160,8 @@
     // Fonction pour rechercher un membre
     function rechercher() {
       if (this.signedIn) {
-        let memberNumber = document.getElementById('numero_membre').value;
-        let memberPhoneNumber = document.getElementById('telephone').value;
+        memberNumber      = inputMemberNumberField.value;
+        memberPhoneNumber = inputMemberPhoneNumberField.value;
         if (memberNumber) {
           // On retire les zéros devant le numéro de membre
           memberNumber = parseInt(memberNumber, 10).toString();
@@ -168,15 +174,11 @@
         } else if (memberPhoneNumber) {
           const selectedMember = this.arrayOfMembers.find(
             // member[5] correspond au numéro de téléphone
-            member => {
-              this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
-            }
-            // member => member[5] === memberPhoneNumber
+            member => this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
           ) || ({} && alert('Entrez un numéro de téléphone valide !'));
           console.log(selectedMember);
           this.displayMember(selectedMember);
         } else {
-          this.appendPre('Membre introuvable');
           console.log('Membre introuvable');
         }
         console.log('Numéro de membre: ' + memberNumber + ', numéro de téléphone: ' + memberPhoneNumber);
