@@ -31,7 +31,7 @@
     </div>
 
     <div class="content">
-      <form id="research-form" onsubmit="return false;">
+      <form id="research-form" onsubmit="return false">
         <fieldset class="form-group">
           <label for="numero_membre" class="bmd-label-static">Numéro de membre :</label>
           <input type="text" id="numero_membre" name="numero_membre" class="form-control">
@@ -43,8 +43,8 @@
           <span class="bmd-help">Entrez le numéro de téléphone</span>
         </fieldset>
         <div class="actions">
-          <button class="btn btn-default" onclick="clearForm();return false">Annuler</button>
           <button class="btn btn-primary btn-raised" onclick="rechercher();return false">Rechercher</button>
+          <button class="btn btn-default" onclick="clearForm();return false">Annuler</button>
         </div>
       </form>
 
@@ -55,7 +55,7 @@
         </p>
         <p class="result__section">
           <label class="result__section__label" for="result__section--numero-famille">Numéro de famille: </label>
-          <span id="result__section--famille"></span>
+          <span id="result__section--numero-famille"></span>
         </p>
         <p class="result__section">
           <label class="result__section__label" for="result__section--numero-membre">Numéro de membre: </label>
@@ -78,6 +78,7 @@
   </div>
 
   <script type="text/javascript">
+
     // Client ID and API key from the Developer Console
     const CLIENT_ID = '1025768983655-egshcuo9dkf4dmj1lh4oihd5emi69oc4.apps.googleusercontent.com';
     const API_KEY = 'AIzaSyBayelfN4-vdH4ZZ1TQyL29HAwZepVun_o';
@@ -176,7 +177,6 @@
           console.log(selectedMember);
           this.displayMember(selectedMember);
         } else {
-          this.appendPre('Membre introuvable');
           console.log('Membre introuvable');
         }
         console.log('Numéro de membre: ' + memberNumber + ', numéro de téléphone: ' + memberPhoneNumber);
