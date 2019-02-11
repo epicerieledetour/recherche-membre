@@ -31,7 +31,7 @@
     </div>
 
     <div class="content">
-      <form id="research-form" onsubmit="return false;">
+      <form id="research-form" onsubmit="return false">
         <fieldset class="form-group">
           <label for="numero_membre" class="bmd-label-static">Numéro de membre :</label>
           <input type="text" id="numero_membre" name="numero_membre" class="form-control">
@@ -43,8 +43,8 @@
           <span class="bmd-help">Entrez le numéro de téléphone</span>
         </fieldset>
         <div class="actions">
+          <button class="btn btn-primary btn-raised" onclick="rechercher();return false">Rechercher</button>
           <button class="btn btn-default" onclick="clearForm();return false">Annuler</button>
-          <button class="btn btn-primary btn-raised" onclick="rechercher();return false" id="submitButton">Rechercher</button>
         </div>
       </form>
 
@@ -78,6 +78,7 @@
   </div>
 
   <script type="text/javascript">
+
     // Client ID and API key from the Developer Console
     const CLIENT_ID = '1025768983655-egshcuo9dkf4dmj1lh4oihd5emi69oc4.apps.googleusercontent.com';
     const API_KEY = 'AIzaSyBayelfN4-vdH4ZZ1TQyL29HAwZepVun_o';
@@ -141,11 +142,11 @@
         this.clearResult();
         this.setStatusColor(member[0]);
         member[0] ? statusField.innerHTML       = member[0] : '';
-        member[1] ? familyNumberField.innerHTML = member[1] : '';
-        member[2] ? memberNumberField.innerHTML = member[2] : '';
-        member[3] ? firstnameField.innerHTML    = member[3] : '';
-        member[4] ? lastnameField.innerHTML     = member[4] : '';
-        member[5] ? phoneField.innerHTML        = member[5] : '';
+        member[2] ? familyNumberField.innerHTML = member[2] : '';
+        member[3] ? memberNumberField.innerHTML = member[3] : '';
+        member[6] ? firstnameField.innerHTML    = member[6] : '';
+        member[5] ? lastnameField.innerHTML     = member[5] : '';
+        member[9] ? phoneField.innerHTML        = member[9] : '';
       }
     }
 
@@ -167,15 +168,15 @@
           // On retire les zéros devant le numéro de membre
           memberNumber = parseInt(memberNumber, 10).toString();
           const selectedMember = this.arrayOfMembers.find(
-            // member[2] correspond au numéro de membre
-            member => member[2] === memberNumber
+            // member[3] correspond au numéro de membre
+            member => member[3] === memberNumber
           ) || ({} && alert('Entrez un numéro de membre valide!'));
           console.log(selectedMember);
           this.displayMember(selectedMember);
         } else if (memberPhoneNumber) {
           const selectedMember = this.arrayOfMembers.find(
-            // member[5] correspond au numéro de téléphone
-            member => this.sanitizeMemberPhoneNumber(member[5]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
+            // member[9] correspond au numéro de téléphone
+            member => this.sanitizeMemberPhoneNumber(member[9]) === this.sanitizeMemberPhoneNumber(memberPhoneNumber)
           ) || ({} && alert('Entrez un numéro de téléphone valide !'));
           console.log(selectedMember);
           this.displayMember(selectedMember);
@@ -255,8 +256,8 @@
      */
     function getMembers() {
       gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: '1ysgHZRO-DCJErSd4vVaYo0zSMxIJopobPpVh_10QBys',
-        range: 'A2:F',
+        spreadsheetId: '1Qry9z3gHLcgnjGPBTacTJwSzOS_aTs6YB54tfoOsYMM',
+        range: 'A2:J',
       }).then(function (response) {
         let range = response.result;
         let newArrayOfMembersData = [];
