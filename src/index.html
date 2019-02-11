@@ -160,6 +160,7 @@
     // Fonction pour rechercher un membre
     function rechercher() {
       if (this.signedIn) {
+        getMembers();
         memberNumber      = inputMemberNumberField.value;
         memberPhoneNumber = inputMemberPhoneNumberField.value;
         if (memberNumber) {
