@@ -20,6 +20,14 @@
   &__section {
     margin: 0;
 
+    &__status {
+      font-size: 2rem;
+
+      label {
+        font-size: 2rem;
+      }
+    }
+
     &__label {
       font-weight: 600;
     }
