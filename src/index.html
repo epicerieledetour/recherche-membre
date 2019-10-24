@@ -12,6 +12,21 @@
   <!-- Material Design for Bootstrap CSS -->
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
   <title>Recherche utilisateur</title>
+
+  <style>
+    #keyboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 1%;
+    }
+
+    #keyboard > div {
+      user-select: none;
+      line-height: 10vh;
+      margin: 0px;
+      font-size: 5vh;
+    }
+  </style>
 </head>
 
 <body>
@@ -42,9 +57,19 @@
           <input type="text" id="telephone" name="telephone" class="form-control">
           <span class="bmd-help">Entrez le numéro de téléphone</span>
         </fieldset>
-        <div class="actions">
-          <button class="btn btn-primary btn-raised" onclick="rechercher();return false">Rechercher</button>
-          <button class="btn btn-default" onclick="clearForm();return false">Annuler</button>
+        <div id="keyboard">
+          <div data-value="1" class="btn btn-primary btn-raised">1</div>
+          <div data-value="2" class="btn btn-primary btn-raised">2</div>
+          <div data-value="3" class="btn btn-primary btn-raised">3</div>
+          <div data-value="4" class="btn btn-primary btn-raised">4</div>
+          <div data-value="5" class="btn btn-primary btn-raised">5</div>
+          <div data-value="6" class="btn btn-primary btn-raised">6</div>
+          <div data-value="7" class="btn btn-primary btn-raised">7</div>
+          <div data-value="8" class="btn btn-primary btn-raised">8</div>
+          <div data-value="9" class="btn btn-primary btn-raised">9</div>
+          <div data-value="cancel" class="btn btn-warning btn-raised">🗙</div>
+          <div data-value="0" class="btn btn-primary btn-raised">0</div>
+          <div data-value="done" class="btn btn-success btn-raised">✓</div>
         </div>
       </form>
 
@@ -271,12 +296,48 @@
         console.error('Error: ' + response.result.error.message);
       });
     }
-
   </script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script>
+    var _lastFocusedField = null;
+
+    $("input").focus(ev => {
+      console.log("FOCUS");
+      console.log(ev);
+      _lastFocusedField = ev.target;
+    })
+
+    function focusLastFocusedField() {
+      _lastFocusedField.focus();
+    }
+
+    function resetLastFocusedField() {
+      _lastFocusedField.value = "";
+    }
+
+    function appendValueToFocusedField(val) {
+      _lastFocusedField.value += val;
+    }
+
+    $("#keyboard").children().mousedown(ev => {
+      focusLastFocusedField()
+      const value = ev.target.dataset.value;
+      if (value == "cancel") {
+        resetLastFocusedField();
+      } else if (value == "done") {
+        rechercher();
+      } else {
+        appendValueToFocusedField(value);
+      }
+
+      return false; // Prevent losing focus of currently focused element
+    })
+
+    $("#numero_membre").focus();
+  </script>
   <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
   <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
