@@ -104,17 +104,6 @@
 
   <script type="text/javascript">
 
-    // Client ID and API key from the Developer Console
-    const CLIENT_ID = '1025768983655-egshcuo9dkf4dmj1lh4oihd5emi69oc4.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyBayelfN4-vdH4ZZ1TQyL29HAwZepVun_o';
-
-    // Array of API discovery doc URLs for APIs used by the quickstart
-    const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-
-    // Authorization scopes required by the API; multiple scopes can be
-    // included, separated by spaces.
-    const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
-
     const authorizeButton             = document.getElementById('authorize_button');
     const signoutButton               = document.getElementById('signout_button');
     const inputMemberNumberField      = document.getElementById('numero_membre');
@@ -224,10 +213,41 @@
     }
 
     /**
+     *  Fetches Google API key and Client ID from local file (in .gitignore list)
+     *  Do not push to public repository. googleKeys.example.json contains example format.
+     *  Keys must be setup in Google Developer Console.
+     *  For details: https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow
+     */
+     async function fetchApiKeys(){
+        try {
+            const response = await fetch('./assets/googleKeys.json');
+            if (response.ok){
+              const keysJson = await response.json();
+              return keysJson;
+            }else console.error("Error loading API keys from file");
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    /**
      *  Initializes the API client library and sets up sign-in state
      *  listeners.
      */
-    function initClient() {
+    async function initClient() {
+
+      // Client ID and API key from the Developer Console
+      const keys = await fetchApiKeys();
+      const CLIENT_ID = keys.CLIENT_ID;
+      const API_KEY = keys.API_KEY;
+
+      // Array of API discovery doc URLs for APIs used by the quickstart
+      const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
+
       gapi.client.init({
         apiKey: API_KEY,
         clientId: CLIENT_ID,
