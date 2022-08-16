@@ -6,7 +6,6 @@
   },
   "private": true,
   "dependencies": {
-    "http-server": "^0.12.3"
-  },
-  "devDependencies": {}
+    "http-server": "^14.1.1"
+  }
 }
