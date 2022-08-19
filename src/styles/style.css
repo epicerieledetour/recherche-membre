@@ -16,24 +16,24 @@
 .result {
   margin-top: 3rem;
   display: none;
+}
 
-  &__section {
-    margin: 0;
+.result__section {
+  margin: 0;
+}
 
-    &__status {
-      font-size: 2rem;
+.result__section__status {
+  font-size: 2rem;
+}
 
-      label {
-        font-size: 2rem;
-      }
-    }
+.result__section__status label {
+  font-size: 2rem;
+}
 
-    &__label {
-      font-weight: 600;
-    }
+.result__section__label {
+  font-weight: 600;
+}
 
-    &--status {
-      font-weight: 800;
-    }
-  }
+.result__section--status {
+  font-weight: 800;
 }
